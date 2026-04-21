@@ -1,0 +1,6 @@
+const HARDCODED_TENANT_ID = "00000000-0000-0000-0000-000000000000";
+
+export const TENANT_ID =
+  process.env.NEXT_PUBLIC_TENANT_ID?.trim() || HARDCODED_TENANT_ID;
+
+export const TENANT_HEADER = "x-tenant-id";
