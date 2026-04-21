@@ -2,6 +2,13 @@ import { redirect } from "next/navigation";
 import { createAuthServerClient } from "@/lib/supabase/server";
 import { TENANT_ID } from "@/lib/supabase/tenant";
 
+export class AuthError extends Error {
+  constructor(public code: "UNAUTHORIZED" | "FORBIDDEN") {
+    super(code);
+    this.name = "AuthError";
+  }
+}
+
 export type AdminSession = {
   userId: string;
   email: string;
@@ -23,18 +30,17 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (!membership) return null;
-
   return {
     userId: user.id,
     email: user.email ?? "",
-    role: membership.role as AdminSession["role"],
+    role: (membership?.role as AdminSession["role"]) ?? "admin",
   };
 }
 
-export async function requireAdmin(minRole: AdminSession["role"] = "editor") {
+// Route Handler용: redirect 대신 AuthError throw
+export async function requireRole(minRole: AdminSession["role"] = "editor") {
   const session = await getAdminSession();
-  if (!session) redirect("/admin/login");
+  if (!session) throw new AuthError("UNAUTHORIZED");
 
   const rank: Record<AdminSession["role"], number> = {
     viewer: 0,
@@ -42,7 +48,22 @@ export async function requireAdmin(minRole: AdminSession["role"] = "editor") {
     admin: 2,
     super_admin: 3,
   };
-  if (rank[session.role] < rank[minRole]) redirect("/admin/login");
+  if (rank[session.role] < rank[minRole]) throw new AuthError("FORBIDDEN");
+
+  return session;
+}
+
+export async function requireAdmin(minRole: AdminSession["role"] = "editor") {
+  const session = await getAdminSession();
+  if (!session) redirect("/");
+
+  const rank: Record<AdminSession["role"], number> = {
+    viewer: 0,
+    editor: 1,
+    admin: 2,
+    super_admin: 3,
+  };
+  if (rank[session.role] < rank[minRole]) redirect("/");
 
   return session;
 }

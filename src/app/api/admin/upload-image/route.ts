@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { AuthError, requireRole } from "@/lib/auth";
+import { AuthError, requireRole } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { TENANT_ID } from "@/lib/supabase/tenant";
 

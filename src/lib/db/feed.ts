@@ -1,7 +1,33 @@
-import type { FeedItem } from "@/data/feed";
+import "server-only";
 import type { Block } from "@/types/blocks";
-import { parseStoredContent } from "@/lib/content";
+import type { TiptapNode } from "@/lib/supabase/content";
+import { parseStoredContent } from "@/lib/supabase/content";
 import { listArticles, getArticleBySlug, type BaseArticleRow } from "@/lib/db/articles";
+export {
+  FEED_SUBCATEGORIES,
+  FEED_THUMBNAIL_ICONS,
+  FEED_DEFAULT_THUMBNAIL_BG,
+  FEED_DEFAULT_THUMBNAIL_ICON,
+} from "@/lib/db/feed-constants";
+
+// ── 타입 ────────────────────────────────────────────────────────────────
+
+export type FeedItem = {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  date: string;
+  readTime: string;
+  author: string;
+  thumbnail: { bg: string; icon: string };
+  content: {
+    sections: { heading: string; body: string[] }[];
+    blocks?: Block[] | TiptapNode;
+  };
+};
+
+// ── DB 쿼리 ───────────────────────────────────────────────────────────────
 
 export type FeedMetadata = {
   readTime?: string;

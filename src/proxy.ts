@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { TENANT_HEADER, TENANT_ID } from "./lib/supabase/tenant";
 
 const ADMIN_PREFIX = "/admin";
-const LOGIN_PATH = "/login";
+const LOGIN_PATH = "/";
 
 export async function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
@@ -46,17 +46,6 @@ export async function proxy(request: NextRequest) {
       const loginUrl = new URL(LOGIN_PATH, request.url);
       loginUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(loginUrl);
-    }
-
-    const { data: membership } = await supabase
-      .from("tenant_memberships")
-      .select("role")
-      .eq("tenant_id", TENANT_ID)
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (!membership) {
-      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 

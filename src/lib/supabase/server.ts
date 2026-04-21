@@ -1,5 +1,5 @@
 import { createServerClient as createSSRClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { TENANT_ID } from "./tenant";
 
@@ -12,7 +12,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
  * Does not read/write cookies — safe to use in generateStaticParams / ISR.
  */
 export function createServerClient() {
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
@@ -29,6 +29,9 @@ export function createServerClient() {
  * Authenticated server client bound to the user's session cookies.
  * Use this for admin reads/writes so RLS policies see the user's role.
  */
+// Route Handler용 alias — createAuthServerClient의 단축 이름
+export const createClient = createAuthServerClient;
+
 export async function createAuthServerClient() {
   const cookieStore = await cookies();
 

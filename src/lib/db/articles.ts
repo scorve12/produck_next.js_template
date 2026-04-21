@@ -1,3 +1,4 @@
+import "server-only";
 import { createServerClient } from "@/lib/supabase/server";
 
 export type BaseArticleRow<M = Record<string, unknown>> = {

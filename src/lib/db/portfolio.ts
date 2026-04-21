@@ -1,7 +1,34 @@
-import type { PortfolioItem, ActivityEvent } from "@/data/portfolio";
-import type { Block } from "@/types/blocks";
-import { parseStoredContent } from "@/lib/content";
+import "server-only";
+import type { Block, ActivityEvent } from "@/types/blocks";
+import type { TiptapNode } from "@/lib/supabase/content";
+import { parseStoredContent } from "@/lib/supabase/content";
 import { listArticles, getArticleBySlug, type BaseArticleRow } from "@/lib/db/articles";
+
+// ── 타입 ─────────────────────────────────────────────────────────────────
+
+export type { ActivityEvent };
+
+export type PortfolioItem = {
+  id: string;
+  displayId: string;
+  title: string;
+  category: string;
+  description: string;
+  thumbnail: string;
+  image: string;
+  tags: string[];
+  period?: string;
+  client?: string;
+  role?: string;
+  blocks?: Block[] | TiptapNode;
+  summary?: string;
+  highlights?: string[];
+  deliverables?: string[];
+  stack?: string[];
+  activity?: ActivityEvent[];
+};
+
+// ── DB 쿼리 ───────────────────────────────────────────────────────────────
 
 export type PortfolioMetadata = {
   tags?: string[];
